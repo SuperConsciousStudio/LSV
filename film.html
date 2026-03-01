@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LSV — Philosophy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; background: #000; overflow: hidden; }
+
+    #player {
+      position: fixed; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    video {
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+
+    /* ── UI overlay ── */
+    #ui {
+      position: fixed; inset: 0;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* Back link */
+    #back {
+      position: fixed; top: 0; left: 0;
+      padding: 16px 20px;
+      font-family: 'Space Mono', monospace;
+      font-size: 8px; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      pointer-events: all;
+      transition: color 0.15s;
+      z-index: 20;
+    }
+    #back:hover { color: #fff; }
+
+    /* Title */
+    #title {
+      position: fixed; bottom: 24px; left: 24px;
+      font-family: 'Space Mono', monospace;
+      font-size: 8px; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      z-index: 20;
+      pointer-events: none;
+    }
+
+    /* Timer */
+    #timer {
+      position: fixed; top: 16px; right: 20px;
+      font-family: 'Space Mono', monospace;
+      font-size: 8px; font-weight: 700;
+      letter-spacing: 0.18em;
+      color: rgba(255,255,255,0.4);
+      z-index: 20;
+      pointer-events: none;
+    }
+
+    /* Controls */
+    #controls {
+      position: fixed; bottom: 24px; right: 24px;
+      display: flex; align-items: center; gap: 12px;
+      z-index: 20;
+      pointer-events: all;
+    }
+    .ctrl-btn {
+      background: none; border: none; cursor: pointer;
+      font-family: 'Space Mono', monospace;
+      font-size: 8px; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      padding: 4px 0;
+      transition: color 0.15s;
+    }
+    .ctrl-btn:hover { color: #fff; }
+
+    /* Play/pause overlay */
+    #play-overlay {
+      position: fixed; inset: 0; z-index: 15;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+    }
+    #play-overlay.hidden { opacity: 0; pointer-events: none; }
+    #play-overlay.playing { opacity: 0; }
+    #play-overlay.playing:hover { opacity: 1; }
+    #play-circle {
+      width: 72px; height: 72px; border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.5);
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.15s, transform 0.15s;
+    }
+    #play-overlay:hover #play-circle {
+      border-color: #fff;
+      transform: scale(1.06);
+    }
+    #play-circle svg { margin-left: 4px; }
+    #play-circle .icon-pause { display: none; margin-left: 0; }
+    #play-overlay.playing #play-circle .icon-play  { display: none; }
+    #play-overlay.playing #play-circle .icon-pause { display: block; }
+
+    /* No video state */
+    #empty {
+      display: none;
+      position: fixed; inset: 0;
+      align-items: center; justify-content: center;
+      flex-direction: column; gap: 12px;
+      font-family: 'Space Mono', monospace;
+      font-size: 9px; letter-spacing: 0.18em;
+      color: rgba(255,255,255,0.2);
+      text-transform: uppercase;
+      z-index: 5;
+    }
+    #empty.show { display: flex; }
+  </style>
+</head>
+<body>
+
+  <a href="/" id="back">← LSV</a>
+
+  <div id="player">
+    <video id="vid" loop playsinline></video>
+  </div>
+
+  <div id="play-overlay">
+    <div id="play-circle">
+      <svg class="icon-play" width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <polygon points="5,2 16,9 5,16" fill="rgba(255,255,255,0.9)"/>
+      </svg>
+      <svg class="icon-pause" width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <rect x="3" y="2" width="4" height="14" fill="rgba(255,255,255,0.9)"/>
+        <rect x="11" y="2" width="4" height="14" fill="rgba(255,255,255,0.9)"/>
+      </svg>
+    </div>
+  </div>
+
+  <div id="empty">
+    <span>No film uploaded</span>
+    <a href="/admin.html" style="color:rgba(255,255,255,0.35);text-decoration:none;font-size:8px;letter-spacing:0.14em;">Upload via admin →</a>
+  </div>
+
+  <div id="timer">0:00 / 0:00</div>
+
+  <div id="title">LINEAR SYSTEMS VENTURES — PHILOSOPHY</div>
+
+  <div id="controls">
+    <button class="ctrl-btn" id="btn-mute">MUTE</button>
+    <button class="ctrl-btn" id="btn-play">PAUSE</button>
+  </div>
+
+  <script>
+    const timer       = document.getElementById('timer')
+    const vid         = document.getElementById('vid')
+    const empty       = document.getElementById('empty')
+    const btnPlay     = document.getElementById('btn-play')
+    const btnMute     = document.getElementById('btn-mute')
+    const playOverlay = document.getElementById('play-overlay')
+
+    fetch('/video-status')
+      .then(r => r.json())
+      .then(({ exists, filename }) => {
+        if (!exists) { empty.classList.add('show'); playOverlay.classList.add('hidden'); return }
+        vid.src = '/uploads/' + filename
+      })
+
+    playOverlay.addEventListener('click', () => {
+      if (vid.paused) {
+        vid.play()
+        playOverlay.classList.add('playing')
+        btnPlay.textContent = 'PAUSE'
+      } else {
+        vid.pause()
+        playOverlay.classList.remove('playing')
+        btnPlay.textContent = 'PLAY'
+      }
+    })
+
+    btnPlay.addEventListener('click', () => {
+      if (vid.paused) {
+        vid.play()
+        playOverlay.classList.add('playing')
+        btnPlay.textContent = 'PAUSE'
+      } else {
+        vid.pause()
+        playOverlay.classList.remove('playing')
+        btnPlay.textContent = 'PLAY'
+      }
+    })
+
+    btnMute.addEventListener('click', () => {
+      vid.muted = !vid.muted
+      btnMute.textContent = vid.muted ? 'UNMUTE' : 'MUTE'
+    })
+
+    function fmt(s) {
+      const m = Math.floor(s / 60)
+      const sec = Math.floor(s % 60).toString().padStart(2, '0')
+      return `${m}:${sec}`
+    }
+
+    vid.addEventListener('timeupdate', () => {
+      timer.textContent = `${fmt(vid.currentTime)} / ${fmt(vid.duration || 0)}`
+    })
+  </script>
+</body>
+</html>

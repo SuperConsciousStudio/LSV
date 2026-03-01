@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LSV — Upload</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #000; color: #fff;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px; line-height: 1.5;
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+    }
+
+    header {
+      border-bottom: 1px solid #222;
+      padding: 14px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .brand { font-size: 9px; font-weight: 700; letter-spacing: 0.14em; color: #555; }
+    .brand span { color: #fff; }
+    a.back { font-size: 8px; font-weight: 700; letter-spacing: 0.14em; color: #444; text-decoration: none; transition: color 0.1s; }
+    a.back:hover { color: #fff; }
+
+    main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 48px 24px; }
+
+    .panel {
+      width: 100%; max-width: 480px;
+      border: 1px solid #222;
+    }
+
+    .panel-head {
+      padding: 14px 20px;
+      border-bottom: 1px solid #222;
+      font-size: 8px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: #555;
+    }
+
+    .panel-body { padding: 28px 20px; display: flex; flex-direction: column; gap: 20px; }
+
+    /* Drop zone */
+    #drop {
+      border: 1px dashed #333;
+      padding: 40px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    #drop:hover, #drop.over { border-color: #fff; background: #0a0a0a; }
+    #drop input { display: none; }
+    .drop-label { font-size: 8px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: #444; }
+    .drop-sub { font-size: 8px; color: #333; margin-top: 6px; letter-spacing: 0.1em; }
+    #file-name { font-size: 9px; color: #777; margin-top: 10px; }
+
+    /* Progress */
+    #progress-wrap { display: none; }
+    #progress-wrap.show { display: block; }
+    .prog-label { font-size: 8px; font-weight: 700; letter-spacing: 0.14em; color: #555; margin-bottom: 8px; text-transform: uppercase; }
+    .prog-track { height: 1px; background: #222; position: relative; }
+    .prog-bar { height: 1px; background: #fff; width: 0%; transition: width 0.1s; }
+    .prog-pct { font-size: 8px; color: #444; margin-top: 6px; }
+
+    /* Submit */
+    #submit {
+      background: #fff; color: #000; border: none; cursor: pointer;
+      font-family: 'Space Mono', monospace;
+      font-size: 8px; font-weight: 700; letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 12px 20px;
+      transition: background 0.1s;
+    }
+    #submit:hover { background: #ccc; }
+    #submit:disabled { background: #222; color: #555; cursor: default; }
+
+    /* Status */
+    #status { font-size: 9px; letter-spacing: 0.08em; min-height: 16px; }
+    #status.ok  { color: #4cff91; }
+    #status.err { color: #ff4c4c; }
+
+    /* Current video */
+    .current { border-top: 1px solid #111; padding: 14px 20px; font-size: 8px; color: #444; letter-spacing: 0.1em; }
+    .current span { color: #777; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">©<span>LSV</span> / ADMIN</div>
+    <a href="/" class="back">← Back to site</a>
+  </header>
+
+  <main>
+    <div class="panel">
+      <div class="panel-head">Upload Film</div>
+      <div class="panel-body">
+
+        <div id="drop">
+          <input type="file" id="file-input" accept="video/mp4,video/quicktime,video/webm,.mp4,.mov,.webm,.m4v" />
+          <div class="drop-label">Drop video here or click to browse</div>
+          <div class="drop-sub">MP4 · MOV · WEBM — up to 2GB</div>
+          <div id="file-name"></div>
+        </div>
+
+        <div id="progress-wrap">
+          <div class="prog-label">Uploading</div>
+          <div class="prog-track"><div class="prog-bar" id="prog-bar"></div></div>
+          <div class="prog-pct" id="prog-pct">0%</div>
+        </div>
+
+        <button id="submit" disabled>Upload</button>
+        <div id="status"></div>
+
+      </div>
+      <div class="current" id="current-video">Checking for existing film…</div>
+    </div>
+  </main>
+
+  <script>
+    const drop      = document.getElementById('drop')
+    const fileInput = document.getElementById('file-input')
+    const fileName  = document.getElementById('file-name')
+    const submit    = document.getElementById('submit')
+    const status    = document.getElementById('status')
+    const progWrap  = document.getElementById('progress-wrap')
+    const progBar   = document.getElementById('prog-bar')
+    const progPct   = document.getElementById('prog-pct')
+    const currentEl = document.getElementById('current-video')
+
+    let selectedFile = null
+
+    // Check current video
+    fetch('/video-status').then(r => r.json()).then(({ exists, filename }) => {
+      currentEl.innerHTML = exists
+        ? `Current film: <span>${filename}</span> — <a href="/film.html" style="color:#555;text-decoration:none">View →</a>`
+        : 'No film uploaded yet.'
+    })
+
+    // Click to browse
+    drop.addEventListener('click', () => fileInput.click())
+
+    // Drag over
+    drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('over') })
+    drop.addEventListener('dragleave', () => drop.classList.remove('over'))
+    drop.addEventListener('drop', e => {
+      e.preventDefault(); drop.classList.remove('over')
+      const f = e.dataTransfer.files[0]
+      if (f) setFile(f)
+    })
+
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files[0]) setFile(fileInput.files[0])
+    })
+
+    function setFile(f) {
+      selectedFile = f
+      const mb = (f.size / 1024 / 1024).toFixed(1)
+      fileName.textContent = `${f.name} (${mb} MB)`
+      submit.disabled = false
+      status.textContent = ''
+      status.className = ''
+    }
+
+    submit.addEventListener('click', () => {
+      if (!selectedFile) return
+
+      const fd = new FormData()
+      fd.append('video', selectedFile)
+
+      const xhr = new XMLHttpRequest()
+      xhr.open('POST', '/upload')
+
+      xhr.upload.addEventListener('progress', e => {
+        if (!e.lengthComputable) return
+        const pct = Math.round((e.loaded / e.total) * 100)
+        progWrap.classList.add('show')
+        progBar.style.width = pct + '%'
+        progPct.textContent = pct + '%'
+      })
+
+      xhr.addEventListener('load', () => {
+        const res = JSON.parse(xhr.responseText)
+        if (res.ok) {
+          status.textContent = 'Upload complete. Film is live.'
+          status.className = 'ok'
+          currentEl.innerHTML = `Current film: <span>${res.filename}</span> — <a href="/film.html" style="color:#555;text-decoration:none">View →</a>`
+        } else {
+          status.textContent = res.error || 'Upload failed.'
+          status.className = 'err'
+        }
+        submit.disabled = false
+        progWrap.classList.remove('show')
+        progBar.style.width = '0%'
+      })
+
+      xhr.addEventListener('error', () => {
+        status.textContent = 'Network error. Try again.'
+        status.className = 'err'
+        submit.disabled = false
+      })
+
+      submit.disabled = true
+      xhr.send(fd)
+    })
+  </script>
+
+</body>
+</html>

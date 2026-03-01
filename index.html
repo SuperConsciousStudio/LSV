@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Linear Systems Ventures</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    @font-face {
+      font-family: 'FK Screamer';
+      src: url('./FKScreamerLegacy-Upright.woff2') format('woff2');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: #000;
+      color: #fff;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      line-height: 1.4;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    .w { max-width: 1280px; margin: 0 auto; padding: 0 32px; }
+
+    /* ── NAV ── */
+    body { margin-left: 100px; }
+    nav { position: fixed; left: 0; top: 0; bottom: 0; width: 100px; border-right: 1px solid #fff; background: #000; z-index: 100; display: flex; flex-direction: column; }
+    .nav-brand { padding: 16px 14px; border-bottom: 1px solid #333; font-size: 9px; font-weight: 700; letter-spacing: 0.1em; white-space: nowrap; }
+    .nav-brand .dim { color: #555; margin-right: 4px; }
+    .nav-links { display: flex; flex-direction: column; list-style: none; flex: 1; padding-top: 4px; }
+    .nav-links li { border-bottom: 1px solid #111; }
+    .nav-links a { display: flex; align-items: center; padding: 11px 14px; font-size: 8px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: #666; transition: color 0.1s; }
+    .nav-links a:hover { color: #fff; }
+    .nav-end { display: flex; flex-direction: column; border-top: 1px solid #222; }
+    .ntag { padding: 8px 14px; font-size: 7px; font-weight: 700; letter-spacing: 0.12em; color: #444; border-bottom: 1px solid #111; display: flex; align-items: center; line-height: 1.3; }
+    .ntag:last-child { border-bottom: none; }
+
+    /* ── TICKER ── */
+    .ticker-wrap { border-bottom: 1px solid #111; overflow: hidden; padding: 8px 0; }
+    .ticker-track { display: flex; gap: 0; animation: ticker 35s linear infinite; width: max-content; }
+    .ticker-track span { font-size: 8px; font-weight: 700; letter-spacing: 0.22em; color: #444; padding-right: 40px; white-space: nowrap; }
+    @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* ── HERO ── */
+    #hero {
+      border-bottom: 1px solid #fff;
+      background: #050008;
+      position: relative;
+      overflow: hidden;
+      height: 75vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .hero-mesh {
+      position: absolute; inset: -60%; z-index: 0; pointer-events: none;
+      filter: blur(130px) saturate(1.2);
+    }
+    .mc { position: absolute; border-radius: 50%; }
+    @keyframes drift-a {
+      0%   { transform: translate(0%, 0%); }
+      25%  { transform: translate(30%, 20%); }
+      50%  { transform: translate(15%, 40%); }
+      75%  { transform: translate(-20%, 25%); }
+      100% { transform: translate(0%, 0%); }
+    }
+    @keyframes drift-b {
+      0%   { transform: translate(0%, 0%); }
+      25%  { transform: translate(-25%, 30%); }
+      50%  { transform: translate(-40%, 10%); }
+      75%  { transform: translate(-15%, -20%); }
+      100% { transform: translate(0%, 0%); }
+    }
+    @keyframes drift-c {
+      0%   { transform: translate(0%, 0%); }
+      33%  { transform: translate(35%, -25%); }
+      66%  { transform: translate(20%, 30%); }
+      100% { transform: translate(0%, 0%); }
+    }
+    @keyframes drift-d {
+      0%   { transform: translate(0%, 0%); }
+      25%  { transform: translate(-30%, -20%); }
+      50%  { transform: translate(-20%, -40%); }
+      75%  { transform: translate(15%, -25%); }
+      100% { transform: translate(0%, 0%); }
+    }
+    @keyframes drift-e {
+      0%   { transform: translate(0%, 0%); }
+      33%  { transform: translate(25%, 35%); }
+      66%  { transform: translate(-30%, 20%); }
+      100% { transform: translate(0%, 0%); }
+    }
+    @keyframes drift-f {
+      0%   { transform: translate(0%, 0%); }
+      25%  { transform: translate(20%, -30%); }
+      50%  { transform: translate(40%, -15%); }
+      75%  { transform: translate(25%, 20%); }
+      100% { transform: translate(0%, 0%); }
+    }
+    @keyframes drift-g {
+      0%   { transform: translate(0%, 0%); }
+      33%  { transform: translate(-35%, 20%); }
+      66%  { transform: translate(-15%, -30%); }
+      100% { transform: translate(0%, 0%); }
+    }
+    .mc1 { width: 55%; height: 55%; top: 5%;  left: 5%;  background: #3300ff; opacity: 0.9; animation: drift-a 12s ease-in-out infinite; }
+    .mc2 { width: 50%; height: 50%; top: 2%;  left: 45%; background: #ff0066; opacity: 0.85; animation: drift-b 15s ease-in-out infinite; }
+    .mc3 { width: 48%; height: 48%; top: 38%; left: -2%; background: #00bbff; opacity: 0.8; animation: drift-c 11s ease-in-out infinite; }
+    .mc4 { width: 52%; height: 52%; top: 48%; left: 52%; background: #ff5500; opacity: 0.8; animation: drift-d 17s ease-in-out infinite; }
+    .mc5 { width: 44%; height: 44%; top: 28%; left: 28%; background: #9900ff; opacity: 0.75; animation: drift-e 10s ease-in-out infinite; }
+    .mc6 { width: 42%; height: 42%; top: 58%; left: 8%;  background: #00ee66; opacity: 0.75; animation: drift-f 14s ease-in-out infinite; }
+    .mc7 { width: 40%; height: 40%; top: 18%; left: 62%; background: #ffcc00; opacity: 0.7; animation: drift-g 13s ease-in-out infinite; }
+    #hero .w { position: relative; z-index: 3; flex: 1; display: flex; flex-direction: column; padding: 0 24px; max-width: 100%; margin: 0; }
+    .hero-grain {
+      position: absolute; inset: 0; z-index: 1; pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.62 0.68' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: 220px 220px;
+      opacity: 0.06;
+      mix-blend-mode: overlay;
+    }
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .reveal { opacity: 0; transform: translateY(10px); transition: opacity 0.55s ease-out, transform 0.55s ease-out; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .hero-eyebar { border-bottom: 1px solid rgba(0,0,0,0.15); padding: 10px 16px; display: flex; align-items: center; gap: 20px; font-size: 8px; font-weight: 700; letter-spacing: 0.2em; color: rgba(0,0,0,0.5); opacity: 0; animation: fade-up 0.5s ease-out 0.1s forwards; }
+    .hero-eyebar .hi { color: #000; }
+    .hero-main { display: grid; grid-template-columns: 1fr; flex: 1; border-bottom: 1px solid rgba(0,0,0,0.15); }
+    .hero-left { padding: 44px 16px 44px 16px; border-right: 1px solid rgba(0,0,0,0.15); display: flex; flex-direction: column; justify-content: space-between; }
+    .hero-hed { font-family: 'FK Screamer', 'Space Mono', monospace; font-size: clamp(58px, 9vw, 130px); font-weight: 400; line-height: 0.88; letter-spacing: -0.01em; text-transform: uppercase; color: #000; opacity: 0; animation: fade-up 0.7s ease-out 0.25s forwards; }
+    .hero-sub { margin-top: 32px; }
+    .hero-sub-text { font-size: 10px; color: rgba(0,0,0,0.6); line-height: 1.8; letter-spacing: 0.04em; max-width: 480px; opacity: 0; animation: fade-up 0.6s ease-out 0.5s forwards; }
+    .hero-btns { display: flex; gap: 2px; margin-top: 20px; opacity: 0; animation: fade-up 0.6s ease-out 0.65s forwards; }
+    .btn { display: inline-block; padding: 10px 20px; font-family: 'Space Mono', monospace; font-size: 8px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; border: 1px solid rgba(0,0,0,0.3); color: rgba(0,0,0,0.6); transition: all 0.1s; }
+    .btn:hover { color: #fff; background: #000; border-color: #000; }
+    .btn-solid { background: #000; color: #fff; border-color: #000; }
+    .btn-solid:hover { background: #333; border-color: #333; }
+
+    .hero-statbar { display: grid; grid-template-columns: repeat(4, 1fr); }
+    .hstat { padding: 18px 16px; border-right: 1px solid rgba(0,0,0,0.15); opacity: 0; animation: fade-up 0.5s ease-out forwards; }
+    .hstat:last-child { border-right: none; }
+    .hstat:nth-child(1) { animation-delay: 0.75s; }
+    .hstat:nth-child(2) { animation-delay: 0.85s; }
+    .hstat:nth-child(3) { animation-delay: 0.95s; }
+    .hstat:nth-child(4) { animation-delay: 1.05s; }
+    .hstat-n { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; color: #000; line-height: 1; margin-bottom: 5px; }
+    .hstat-l { font-size: 8px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(0,0,0,0.5); }
+
+    /* ── PROCESS STRIP ── */
+    .process-strip { border-bottom: 1px solid #111; padding: 0 32px; overflow: hidden; }
+
+    /* ── SECTION CHROME ── */
+    .sec-bar { border-bottom: 1px solid #222; padding: 10px 32px; display: flex; align-items: center; gap: 12px; font-size: 8px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; }
+    .sec-num { color: #444; }
+    .sec-title { color: #fff; }
+    .sec-r { margin-left: auto; color: #444; }
+
+    /* ── ABOUT ── */
+    #about { border-bottom: 1px solid #fff; }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; min-height: 50vh; }
+    .about-left { padding: 48px 32px; border-right: 1px solid #222; display: flex; flex-direction: column; gap: 32px; }
+    .about-stmt { font-family: 'FK Screamer', 'Space Mono', monospace; font-size: clamp(24px, 3vw, 40px); font-weight: 400; line-height: 1.0; letter-spacing: -0.01em; text-transform: uppercase; }
+    .about-diagram { margin: 0; border: 1px solid #1a1a1a; }
+    .spec-block { display: flex; flex-direction: column; gap: 0; }
+    .spec-row { display: flex; gap: 12px; padding: 8px 0; border-top: 1px solid #0f0f0f; font-size: 9px; }
+    .spec-k { font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #555; width: 88px; flex-shrink: 0; }
+    .spec-v { color: #888; letter-spacing: 0.04em; line-height: 1.6; }
+    .about-right { display: flex; flex-direction: column; }
+    .pillar { padding: 26px 32px; border-bottom: 1px solid #0d0d0d; display: grid; grid-template-columns: 36px 1fr; }
+    .pillar:last-child { border-bottom: none; }
+    .p-idx { font-size: 8px; font-weight: 700; letter-spacing: 0.12em; color: #444; padding-top: 1px; }
+    .p-title { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #fff; margin-bottom: 7px; }
+    .p-body { font-size: 10px; color: #777; line-height: 1.75; }
+
+    /* ── PORTFOLIO COMPOSITION BAR ── */
+    .comp-bar { border-bottom: 1px solid #111; padding: 0 32px; overflow: hidden; }
+
+    /* ── PORTFOLIO GRID ── */
+    #portfolio { border-bottom: 1px solid #fff; }
+    .co-grid { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid #111; }
+    .co-card { border-right: 1px solid #111; border-bottom: 1px solid #111; display: flex; flex-direction: column; transition: background 0.12s; }
+    .co-card:nth-child(3n) { border-right: none; }
+    .co-card:hover { background: #040404; }
+    .co-card-top { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; border-bottom: 1px solid #0d0d0d; }
+    .co-idx { font-size: 8px; font-weight: 700; letter-spacing: 0.18em; color: #555; }
+    .co-sector-tag { font-size: 7px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: #444; border: 1px solid #333; padding: 2px 6px; }
+    .co-card-mark { display: flex; align-items: center; justify-content: center; padding: 28px 0; border-bottom: 1px solid #0d0d0d; position: relative; }
+    .co-card-mark::before, .co-card-mark::after { content: ''; position: absolute; width: 8px; height: 8px; }
+    .co-card-mark::before { top: 8px; left: 8px; border-top: 1px solid #1a1a1a; border-left: 1px solid #1a1a1a; }
+    .co-card-mark::after { bottom: 8px; right: 8px; border-bottom: 1px solid #1a1a1a; border-right: 1px solid #1a1a1a; }
+    .co-card-body { padding: 20px 20px 0; flex: 1; }
+    .co-name { font-family: 'FK Screamer', 'Space Mono', monospace; font-size: clamp(22px, 2.4vw, 32px); font-weight: 400; letter-spacing: -0.01em; color: #fff; text-transform: uppercase; line-height: 0.95; margin-bottom: 14px; }
+    .co-desc { font-size: 9px; color: #666; line-height: 1.8; letter-spacing: 0.02em; }
+    .co-card-foot { display: flex; align-items: flex-end; justify-content: space-between; padding: 16px 20px; margin-top: auto; border-top: 1px solid #0d0d0d; }
+    .co-year { font-size: 28px; font-weight: 700; color: #fff; letter-spacing: -0.03em; line-height: 1; }
+    .co-yl { font-size: 7px; letter-spacing: 0.16em; color: #444; margin-top: 3px; text-transform: uppercase; font-weight: 700; }
+    .co-tags { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
+    .tag { font-size: 7px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #555; border: 1px solid #333; padding: 2px 6px; }
+
+    /* ── CONTACT ── */
+    #contact { border-bottom: 1px solid #fff; }
+    .contact-grid { display: grid; grid-template-columns: 1fr; }
+    .contact-left { padding: 48px 32px; border-right: 1px solid #222; display: flex; flex-direction: column; gap: 32px; }
+    .contact-hed { font-size: clamp(28px, 4vw, 52px); font-weight: 700; line-height: 1.0; letter-spacing: -0.03em; text-transform: uppercase; }
+    .contact-right { display: flex; flex-direction: column; }
+    .c-row { display: flex; align-items: center; justify-content: space-between; padding: 26px 32px; border-bottom: 1px solid #0d0d0d; transition: background 0.1s; }
+    .c-row:last-child { border-bottom: none; }
+    .c-row:hover { background: #050505; }
+    .c-label { font-size: 8px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: #444; margin-bottom: 6px; }
+    .c-value { font-size: 13px; font-weight: 700; letter-spacing: 0.02em; }
+    .c-arr { font-size: 14px; color: #444; transition: color 0.1s; }
+    .c-row:hover .c-arr { color: #fff; }
+
+    /* ── FOOTER ── */
+    footer { border-top: 1px solid #222; }
+    .footer-row { display: flex; align-items: stretch; height: 36px; }
+    .footer-l { font-size: 9px; font-weight: 700; letter-spacing: 0.14em; color: #444; display: flex; align-items: center; padding-right: 20px; border-right: 1px solid #111; }
+    .footer-m { display: flex; align-items: center; padding: 0 20px; font-size: 8px; letter-spacing: 0.14em; color: #333; gap: 14px; }
+    .footer-r { margin-left: auto; display: flex; align-items: center; font-size: 8px; letter-spacing: 0.1em; color: #333; padding: 0 20px; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      body { margin-left: 0; padding-top: 36px; }
+      nav { position: fixed; left: 0; top: 0; bottom: auto; width: 100%; height: 36px; flex-direction: row; align-items: stretch; border-right: none; border-bottom: 1px solid #fff; }
+      .nav-brand { border-bottom: none; border-right: 1px solid #333; padding: 0 14px; display: flex; align-items: center; }
+      .nav-links { flex-direction: row; padding-top: 0; flex: 1; }
+      .nav-links li { border-bottom: none; border-right: 1px solid #111; }
+      .nav-links a { padding: 0 14px; height: 100%; }
+      .nav-end { flex-direction: row; border-top: none; border-left: 1px solid #222; margin-left: auto; }
+      .ntag { border-bottom: none; border-right: 1px solid #111; padding: 0 10px; height: 100%; }
+      .ntag:last-child { border-right: none; }
+      .hero-main { grid-template-columns: 1fr; }
+      .about-grid, .contact-grid { grid-template-columns: 1fr; }
+      .about-left, .contact-left { border-right: none; border-bottom: 1px solid #222; }
+      .hero-statbar { grid-template-columns: 1fr 1fr; }
+      .co-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+<script>
+  history.scrollRestoration = 'manual';
+  window.addEventListener('beforeunload', () => {
+    sessionStorage.setItem('scrollY', window.scrollY);
+  });
+  window.addEventListener('load', () => {
+    const y = sessionStorage.getItem('scrollY');
+    if (y) window.scrollTo(0, parseInt(y));
+  });
+</script>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="nav-brand"><span class="dim">©</span>LSV</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#portfolio">Portfolio</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="/film.html">Philosophy</a></li>
+  </ul>
+  <div class="nav-end">
+    <span class="ntag">VENTURE STUDIO</span>
+    <span class="ntag">EST. 20XX</span>
+    <span class="ntag">V1.0</span>
+  </div>
+</nav>
+
+<!-- ── TICKER ── -->
+<div class="ticker-wrap">
+  <div class="ticker-track">
+    <span>LINEAR SYSTEMS VENTURES</span><span>·</span>
+    <span>HOLDING COMPANY</span><span>·</span>
+    <span>LONG-TERM OWNERSHIP</span><span>·</span>
+    <span>PATIENT CAPITAL</span><span>·</span>
+    <span>OPERATIONAL FOCUS</span><span>·</span>
+    <span>MAJORITY ACQUISITIONS</span><span>·</span>
+    <span>NO EXIT HORIZON</span><span>·</span>
+    <span>©LSV / EST. 20XX</span><span>·</span>
+    <span>LINEAR SYSTEMS VENTURES</span><span>·</span>
+    <span>HOLDING COMPANY</span><span>·</span>
+    <span>LONG-TERM OWNERSHIP</span><span>·</span>
+    <span>PATIENT CAPITAL</span><span>·</span>
+    <span>OPERATIONAL FOCUS</span><span>·</span>
+    <span>MAJORITY ACQUISITIONS</span><span>·</span>
+    <span>NO EXIT HORIZON</span><span>·</span>
+    <span>©LSV / EST. 20XX</span><span>·</span>
+  </div>
+</div>
+
+<!-- ── HERO ── -->
+<section id="hero">
+  <div class="hero-mesh">
+    <div class="mc mc1"></div>
+    <div class="mc mc2"></div>
+    <div class="mc mc3"></div>
+    <div class="mc mc4"></div>
+    <div class="mc mc5"></div>
+    <div class="mc mc6"></div>
+    <div class="mc mc7"></div>
+  </div>
+  <div class="hero-grain"></div>
+  <div class="w">
+
+    <div class="hero-eyebar">
+      <span class="hi">LINEAR SYSTEMS VENTURES</span>
+      <span>——</span>
+      <span>VENTURE STUDIO</span>
+      <span>·</span>
+      <span>PROFESSIONAL SERVICES</span>
+      <span>·</span>
+      <span>MINORITY EQUITY</span>
+      <span style="margin-left:auto">[V1.0 / 20XX]</span>
+    </div>
+
+    <div class="hero-main">
+      <!-- Left: Headline -->
+      <div class="hero-left">
+        <div>
+          <h1 class="hero-hed">LINEAR<br/>SYSTEMS<br/>VENTURES</h1>
+        </div>
+        <div class="hero-sub">
+          <p class="hero-sub-text">
+            A venture studio for founder-led professional service businesses.<br/>
+            We take minority equity in exchange for strategic advisory, marketing execution, and network access. We are not investors. We are operators.
+          </p>
+          <div class="hero-btns">
+            <a href="#portfolio" class="btn btn-solid">Our Partners</a>
+            <a href="#contact" class="btn">Work With Us</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="hero-statbar">
+      <div class="hstat"><div class="hstat-n">6</div><div class="hstat-l">Studio partners</div></div>
+      <div class="hstat"><div class="hstat-n">4</div><div class="hstat-l">Service verticals</div></div>
+      <div class="hstat"><div class="hstat-n">8</div><div class="hstat-l">Years operating</div></div>
+      <div class="hstat"><div class="hstat-n">24</div><div class="hstat-l">Team members</div></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── PROCESS FLOW ── -->
+<div class="process-strip">
+  <div class="w" style="padding-top:0;padding-bottom:0;">
+    <svg viewBox="0 0 1216 72" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block">
+      <!-- Baseline -->
+      <line x1="0" y1="36" x2="1216" y2="36" stroke="#111" stroke-width="0.75"/>
+      <!-- End ticks -->
+      <line x1="0" y1="28" x2="0" y2="44" stroke="#222" stroke-width="1"/>
+      <line x1="1216" y1="28" x2="1216" y2="44" stroke="#222" stroke-width="1"/>
+      <!-- Arrow at end -->
+      <polyline points="1208,30 1216,36 1208,42" stroke="#222" stroke-width="1" fill="none"/>
+
+      <!-- Node 1: IDENTIFY (x=152) -->
+      <circle cx="152" cy="36" r="7" fill="#000" stroke="#fff" stroke-width="1.5"/>
+      <circle cx="152" cy="36" r="13" fill="none" stroke="#1a1a1a" stroke-width="0.75"/>
+      <text x="152" y="18" fill="#fff" font-family="Space Mono" font-size="7.5" font-weight="700" text-anchor="middle" letter-spacing="0.22em">SOURCE</text>
+      <text x="152" y="58" fill="#2a2a2a" font-family="Space Mono" font-size="6.5" text-anchor="middle" letter-spacing="0.1em">01</text>
+
+      <!-- Node 2: EVALUATE (x=366) -->
+      <circle cx="366" cy="36" r="5.5" fill="#000" stroke="#555" stroke-width="1"/>
+      <circle cx="366" cy="36" r="11" fill="none" stroke="#1a1a1a" stroke-width="0.5" stroke-dasharray="2 3"/>
+      <text x="366" y="18" fill="#666" font-family="Space Mono" font-size="7.5" font-weight="700" text-anchor="middle" letter-spacing="0.22em">EVALUATE</text>
+      <text x="366" y="58" fill="#2a2a2a" font-family="Space Mono" font-size="6.5" text-anchor="middle" letter-spacing="0.1em">02</text>
+
+      <!-- Node 3: ACQUIRE (x=580) -->
+      <circle cx="580" cy="36" r="7" fill="#fff"/>
+      <circle cx="580" cy="36" r="13" fill="none" stroke="#333" stroke-width="0.75"/>
+      <!-- crosshair on this node -->
+      <line x1="572" y1="36" x2="588" y2="36" stroke="#000" stroke-width="1"/>
+      <line x1="580" y1="28" x2="580" y2="44" stroke="#000" stroke-width="1"/>
+      <text x="580" y="18" fill="#fff" font-family="Space Mono" font-size="7.5" font-weight="700" text-anchor="middle" letter-spacing="0.22em">PARTNER</text>
+      <text x="580" y="58" fill="#2a2a2a" font-family="Space Mono" font-size="6.5" text-anchor="middle" letter-spacing="0.1em">03</text>
+
+      <!-- Node 4: OPERATE (x=794) -->
+      <circle cx="794" cy="36" r="5.5" fill="#000" stroke="#555" stroke-width="1"/>
+      <circle cx="794" cy="36" r="11" fill="none" stroke="#1a1a1a" stroke-width="0.5" stroke-dasharray="2 3"/>
+      <text x="794" y="18" fill="#666" font-family="Space Mono" font-size="7.5" font-weight="700" text-anchor="middle" letter-spacing="0.22em">EMBED</text>
+      <text x="794" y="58" fill="#2a2a2a" font-family="Space Mono" font-size="6.5" text-anchor="middle" letter-spacing="0.1em">04</text>
+
+      <!-- Node 5: IMPROVE (x=1008) -->
+      <circle cx="1008" cy="36" r="5.5" fill="#000" stroke="#555" stroke-width="1"/>
+      <circle cx="1008" cy="36" r="11" fill="none" stroke="#1a1a1a" stroke-width="0.5" stroke-dasharray="2 3"/>
+      <text x="1008" y="18" fill="#666" font-family="Space Mono" font-size="7.5" font-weight="700" text-anchor="middle" letter-spacing="0.22em">GROW</text>
+      <text x="1008" y="58" fill="#2a2a2a" font-family="Space Mono" font-size="6.5" text-anchor="middle" letter-spacing="0.1em">05</text>
+
+      <!-- Node 6: HOLD ∞ (x=1160) -->
+      <circle cx="1160" cy="36" r="9" fill="#000" stroke="#fff" stroke-width="1.5"/>
+      <circle cx="1160" cy="36" r="15" fill="none" stroke="#333" stroke-width="0.5"/>
+      <circle cx="1160" cy="36" r="20" fill="none" stroke="#1a1a1a" stroke-width="0.5" stroke-dasharray="3 4"/>
+      <text x="1160" y="18" fill="#fff" font-family="Space Mono" font-size="7.5" font-weight="700" text-anchor="middle" letter-spacing="0.22em">SCALE</text>
+      <text x="1160" y="58" fill="#2a2a2a" font-family="Space Mono" font-size="6.5" text-anchor="middle" letter-spacing="0.1em">06 / ∞</text>
+    </svg>
+  </div>
+</div>
+
+<!-- ── ABOUT ── -->
+<section id="about">
+  <div class="w">
+    <div class="sec-bar">
+      <span class="sec-num">©LSV</span>
+      <span class="sec-title">/ ABOUT</span>
+      <span class="sec-num">01</span>
+      <span class="sec-r">[NOT A FUND · NOT A VC · OPERATORS FIRST]</span>
+    </div>
+    <div class="about-grid">
+      <div class="about-left">
+        <p class="about-stmt reveal">OPERATORS,<br/>NOT INVESTORS.</p>
+
+        <!-- Structure diagram -->
+
+        <div class="spec-block">
+          <div class="spec-row reveal"><span class="spec-k">STRUCTURE</span><span class="spec-v">Venture studio · Minority equity stake · No fund structure</span></div>
+          <div class="spec-row reveal"><span class="spec-k">EXCHANGE</span><span class="spec-v">Strategic advisory · Brand & content marketing · Network introductions</span></div>
+          <div class="spec-row reveal"><span class="spec-k">TARGET</span><span class="spec-v">Founder-led · Professional services · Revenue-generating · Growth-stage</span></div>
+          <div class="spec-row reveal"><span class="spec-k">NOT THIS</span><span class="spec-v">Startups · Pre-revenue · Product companies · Passive investors</span></div>
+        </div>
+      </div>
+
+      <div class="about-right">
+        <div class="pillar reveal"><span class="p-idx">[01]</span><div><div class="p-title">Marketing Execution</div><p class="p-body">We bring a full brand and content marketing agency. Not introductions to agencies — actual execution. Strategy, content, distribution, and positioning built specifically for professional service businesses.</p></div></div>
+        <div class="pillar reveal"><span class="p-idx">[02]</span><div><div class="p-title">Strategic Advisory</div><p class="p-body">We've built a services business. We know the specific pressures — client concentration, pricing, retention, hiring. We advise from lived experience, not theory or a framework deck.</p></div></div>
+        <div class="pillar reveal"><span class="p-idx">[03]</span><div><div class="p-title">Network Access</div><p class="p-body">Warm introductions to clients, partners, and talent from a network built over years in professional services. The right connection at the right time compounds faster than any ad spend.</p></div></div>
+        <div class="pillar reveal"><span class="p-idx">[04]</span><div><div class="p-title">Genuine Partnership</div><p class="p-body">We take minority stakes and stay involved. Not passive shareholders waiting on a return. Every partner gets our attention, access to our team, and a growth partner with skin in the game.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PORTFOLIO COMPOSITION BAR ── -->
+<div class="comp-bar">
+  <div class="w" style="padding-top:0;padding-bottom:0;">
+    <svg viewBox="0 0 1216 52" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block">
+      <!-- Label -->
+      <text x="0" y="14" fill="#222" font-family="Space Mono" font-size="7" font-weight="700" letter-spacing="0.2em">[PORTFOLIO COMPOSITION / BY SECTOR]</text>
+      <!-- Baseline -->
+      <line x1="0" y1="36" x2="1216" y2="36" stroke="#1a1a1a" stroke-width="0.5"/>
+      <!-- Segments: proportional blocks (6 equal for now) -->
+      <!-- CONSULTING -->
+      <rect x="0" y="28" width="240" height="8" fill="#fff"/>
+      <text x="6" y="23" fill="#fff" font-family="Space Mono" font-size="6.5" font-weight="700" letter-spacing="0.14em">CONSULTING</text>
+      <!-- MARKETING -->
+      <rect x="242" y="28" width="210" height="8" fill="#555"/>
+      <text x="248" y="23" fill="#555" font-family="Space Mono" font-size="6.5" font-weight="700" letter-spacing="0.14em">MARKETING</text>
+      <!-- LEGAL -->
+      <rect x="454" y="28" width="150" height="8" fill="#333"/>
+      <text x="460" y="23" fill="#333" font-family="Space Mono" font-size="6.5" font-weight="700" letter-spacing="0.14em">LEGAL</text>
+      <!-- FINANCE -->
+      <rect x="606" y="28" width="190" height="8" fill="#444"/>
+      <text x="612" y="23" fill="#444" font-family="Space Mono" font-size="6.5" font-weight="700" letter-spacing="0.14em">FINANCE</text>
+      <!-- TECH SVC -->
+      <rect x="798" y="28" width="220" height="8" fill="#2a2a2a"/>
+      <text x="804" y="23" fill="#2a2a2a" font-family="Space Mono" font-size="6.5" font-weight="700" letter-spacing="0.14em">TECH SVCS</text>
+      <!-- CREATIVE -->
+      <rect x="1020" y="28" width="196" height="8" fill="#1a1a1a"/>
+      <text x="1026" y="23" fill="#1a1a1a" font-family="Space Mono" font-size="6.5" font-weight="700" letter-spacing="0.14em">CREATIVE</text>
+      <!-- Tick marks at segment boundaries -->
+      <line x1="182" y1="24" x2="182" y2="44" stroke="#0d0d0d" stroke-width="1"/>
+      <line x1="404" y1="24" x2="404" y2="44" stroke="#0d0d0d" stroke-width="1"/>
+      <line x1="566" y1="24" x2="566" y2="44" stroke="#0d0d0d" stroke-width="1"/>
+      <line x1="768" y1="24" x2="768" y2="44" stroke="#0d0d0d" stroke-width="1"/>
+      <line x1="1020" y1="24" x2="1020" y2="44" stroke="#0d0d0d" stroke-width="1"/>
+    </svg>
+  </div>
+</div>
+
+<!-- ── PORTFOLIO ── -->
+<section id="portfolio">
+  <div class="w">
+
+    <div class="sec-bar">
+      <span class="sec-num">©LSV</span>
+      <span class="sec-title">/ PORTFOLIO</span>
+      <span class="sec-num">02</span>
+      <span class="sec-r">6 PARTNERS · PLACEHOLDER CONTENT</span>
+    </div>
+
+    <div class="co-grid">
+
+      <!-- CO.01 Meridian Industrial -->
+      <div class="co-card reveal">
+        <div class="co-card-top">
+          <span class="co-idx">[CO.01]</span>
+          <span class="co-sector-tag">Consulting</span>
+        </div>
+        <div class="co-card-mark">
+          <svg viewBox="0 0 48 48" fill="none" width="48" height="48">
+            <rect x="12" y="12" width="24" height="24" stroke="#333" stroke-width="0.75" transform="rotate(45 24 24)"/>
+            <circle cx="24" cy="24" r="5" fill="none" stroke="#444" stroke-width="0.75"/>
+            <line x1="24" y1="2" x2="24" y2="46" stroke="#1a1a1a" stroke-width="0.5"/>
+            <line x1="2" y1="24" x2="46" y2="24" stroke="#1a1a1a" stroke-width="0.5"/>
+            <circle cx="24" cy="24" r="2" fill="#555"/>
+          </svg>
+        </div>
+        <div class="co-card-body">
+          <div class="co-name">Meridian Advisory</div>
+          <p class="co-desc">B2B strategy and operations consultancy serving mid-market PE-backed businesses. Known for direct engagements, lean teams, and measurable outcomes across the full operating model.</p>
+        </div>
+        <div class="co-card-foot">
+          <div><div class="co-year">2021</div><div class="co-yl">Partner</div></div>
+          <div class="co-tags"><span class="tag">B2B</span><span class="tag">Strategy</span></div>
+        </div>
+      </div>
+
+      <!-- CO.02 Cascade Marketing -->
+      <div class="co-card reveal">
+        <div class="co-card-top">
+          <span class="co-idx">[CO.02]</span>
+          <span class="co-sector-tag">Marketing</span>
+        </div>
+        <div class="co-card-mark">
+          <svg viewBox="0 0 48 48" fill="none" width="48" height="48">
+            <circle cx="24" cy="24" r="16" stroke="#333" stroke-width="0.75"/>
+            <circle cx="24" cy="24" r="8" stroke="#2a2a2a" stroke-width="0.75" stroke-dasharray="2 2"/>
+            <circle cx="24" cy="24" r="3" fill="#555"/>
+            <circle cx="24" cy="8" r="2" fill="#000" stroke="#444" stroke-width="0.75"/>
+            <circle cx="40" cy="24" r="2" fill="#000" stroke="#444" stroke-width="0.75"/>
+            <circle cx="24" cy="40" r="2" fill="#000" stroke="#444" stroke-width="0.75"/>
+            <circle cx="8" cy="24" r="2" fill="#000" stroke="#444" stroke-width="0.75"/>
+          </svg>
+        </div>
+        <div class="co-card-body">
+          <div class="co-name">Cascade Marketing</div>
+          <p class="co-desc">Performance marketing agency specializing in B2B demand generation and brand strategy for professional services firms. Founder-led, remote-first, with a tight client roster and exceptional retention.</p>
+        </div>
+        <div class="co-card-foot">
+          <div><div class="co-year">2022</div><div class="co-yl">Partner</div></div>
+          <div class="co-tags"><span class="tag">B2B</span><span class="tag">Agency</span></div>
+        </div>
+      </div>
+
+      <!-- CO.03 Northgate Legal -->
+      <div class="co-card reveal">
+        <div class="co-card-top">
+          <span class="co-idx">[CO.03]</span>
+          <span class="co-sector-tag">Legal</span>
+        </div>
+        <div class="co-card-mark">
+          <svg viewBox="0 0 48 48" fill="none" width="48" height="48">
+            <line x1="6" y1="24" x2="42" y2="24" stroke="#333" stroke-width="0.75"/>
+            <polyline points="34,16 42,24 34,32" stroke="#444" stroke-width="0.75" fill="none"/>
+            <circle cx="12" cy="24" r="3" fill="#000" stroke="#444" stroke-width="0.75"/>
+            <circle cx="24" cy="24" r="3" fill="#000" stroke="#333" stroke-width="0.75"/>
+            <line x1="12" y1="14" x2="12" y2="34" stroke="#1a1a1a" stroke-width="0.5"/>
+            <line x1="24" y1="14" x2="24" y2="34" stroke="#1a1a1a" stroke-width="0.5"/>
+          </svg>
+        </div>
+        <div class="co-card-body">
+          <div class="co-name">Northgate Legal</div>
+          <p class="co-desc">Boutique commercial law practice focused on M&A, contracts, and regulatory work for mid-market businesses. 18-attorney firm with a loyal referral-driven client base and zero institutional overhead.</p>
+        </div>
+        <div class="co-card-foot">
+          <div><div class="co-year">2020</div><div class="co-yl">Partner</div></div>
+          <div class="co-tags"><span class="tag">M&amp;A</span><span class="tag">Commercial</span></div>
+        </div>
+      </div>
+
+      <!-- CO.04 Summit Financial -->
+      <div class="co-card reveal">
+        <div class="co-card-top">
+          <span class="co-idx">[CO.04]</span>
+          <span class="co-sector-tag">Finance</span>
+        </div>
+        <div class="co-card-mark">
+          <svg viewBox="0 0 48 48" fill="none" width="48" height="48">
+            <circle cx="14" cy="14" r="5" fill="#555"/>
+            <circle cx="34" cy="14" r="5" fill="#333" stroke="#444" stroke-width="0.5"/>
+            <circle cx="14" cy="34" r="5" fill="#333" stroke="#444" stroke-width="0.5"/>
+            <circle cx="34" cy="34" r="5" fill="#555"/>
+            <circle cx="24" cy="24" r="3" fill="#222" stroke="#333" stroke-width="0.5"/>
+            <line x1="14" y1="14" x2="34" y2="14" stroke="#1a1a1a" stroke-width="0.5"/>
+            <line x1="14" y1="14" x2="14" y2="34" stroke="#1a1a1a" stroke-width="0.5"/>
+            <line x1="34" y1="14" x2="34" y2="34" stroke="#1a1a1a" stroke-width="0.5"/>
+            <line x1="14" y1="34" x2="34" y2="34" stroke="#1a1a1a" stroke-width="0.5"/>
+          </svg>
+        </div>
+        <div class="co-card-body">
+          <div class="co-name">Summit Financial</div>
+          <p class="co-desc">Independent financial advisory firm serving business owners through M&A, exit planning, and capital structure work. No institutional backing — purely fee-based, client-first, and deeply relationship-driven.</p>
+        </div>
+        <div class="co-card-foot">
+          <div><div class="co-year">2023</div><div class="co-yl">Partner</div></div>
+          <div class="co-tags"><span class="tag">Advisory</span><span class="tag">Exit Planning</span></div>
+        </div>
+      </div>
+
+      <!-- CO.05 Ironwood Digital -->
+      <div class="co-card reveal">
+        <div class="co-card-top">
+          <span class="co-idx">[CO.05]</span>
+          <span class="co-sector-tag">Tech Svcs</span>
+        </div>
+        <div class="co-card-mark">
+          <svg viewBox="0 0 48 48" fill="none" width="48" height="48">
+            <rect x="7" y="18" width="34" height="12" stroke="#333" stroke-width="0.75" fill="#000"/>
+            <line x1="13" y1="18" x2="13" y2="30" stroke="#1a1a1a" stroke-width="0.5"/>
+            <line x1="24" y1="18" x2="24" y2="30" stroke="#1a1a1a" stroke-width="0.5"/>
+            <line x1="35" y1="18" x2="35" y2="30" stroke="#1a1a1a" stroke-width="0.5"/>
+            <line x1="7" y1="24" x2="41" y2="24" stroke="#1a1a1a" stroke-width="0.5"/>
+            <circle cx="13" cy="13" r="3" fill="#000" stroke="#333" stroke-width="0.75"/>
+            <circle cx="24" cy="13" r="3" fill="#555"/>
+            <circle cx="35" cy="13" r="3" fill="#000" stroke="#333" stroke-width="0.75"/>
+            <line x1="13" y1="13" x2="13" y2="18" stroke="#222" stroke-width="0.5"/>
+            <line x1="24" y1="13" x2="24" y2="18" stroke="#222" stroke-width="0.5"/>
+            <line x1="35" y1="13" x2="35" y2="18" stroke="#222" stroke-width="0.5"/>
+          </svg>
+        </div>
+        <div class="co-card-body">
+          <div class="co-name">Ironwood Digital</div>
+          <p class="co-desc">Technology services firm delivering web, product, and systems work to professional services clients. Small senior team, no offshore, no fluff — high-trust engagements with measurable delivery outcomes.</p>
+        </div>
+        <div class="co-card-foot">
+          <div><div class="co-year">2022</div><div class="co-yl">Partner</div></div>
+          <div class="co-tags"><span class="tag">Product</span><span class="tag">Dev</span></div>
+        </div>
+      </div>
+
+      <!-- CO.06 Clearwater Creative -->
+      <div class="co-card reveal">
+        <div class="co-card-top">
+          <span class="co-idx">[CO.06]</span>
+          <span class="co-sector-tag">Creative</span>
+        </div>
+        <div class="co-card-mark">
+          <svg viewBox="0 0 48 48" fill="none" width="48" height="48">
+            <circle cx="24" cy="24" r="18" stroke="#333" stroke-width="0.75" stroke-dasharray="3 3"/>
+            <circle cx="24" cy="24" r="11" stroke="#2a2a2a" stroke-width="0.75"/>
+            <circle cx="24" cy="24" r="5" stroke="#333" stroke-width="0.75" fill="#000"/>
+            <line x1="6" y1="24" x2="19" y2="24" stroke="#1a1a1a" stroke-width="0.5"/>
+            <line x1="29" y1="24" x2="42" y2="24" stroke="#1a1a1a" stroke-width="0.5"/>
+            <circle cx="24" cy="24" r="1.5" fill="#444"/>
+          </svg>
+        </div>
+        <div class="co-card-body">
+          <div class="co-name">Clearwater Creative</div>
+          <p class="co-desc">Independent brand and design studio working with founder-led companies on identity, positioning, and visual systems. Opinionated work, long-term retainers, and a reputation that drives inbound.</p>
+        </div>
+        <div class="co-card-foot">
+          <div><div class="co-year">2023</div><div class="co-yl">Partner</div></div>
+          <div class="co-tags"><span class="tag">Brand</span><span class="tag">Design</span></div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- ── CONTACT ── -->
+<section id="contact">
+  <div class="w">
+    <div class="sec-bar">
+      <span class="sec-num">©LSV</span>
+      <span class="sec-title">/ CONTACT</span>
+      <span class="sec-num">03</span>
+      <span class="sec-r">[REACH OUT · WE RESPOND]</span>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-right" style="border-right:none;">
+        <a href="mailto:contact@linearsystems.vc" class="c-row reveal">
+          <div><div class="c-label">[01] GENERAL INQUIRIES</div><div class="c-value">contact@linearsystems.vc</div></div>
+          <span class="c-arr">↗</span>
+        </a>
+        <a href="mailto:acquisitions@linearsystems.vc" class="c-row reveal">
+          <div><div class="c-label">[02] ACQUISITIONS</div><div class="c-value">acquisitions@linearsystems.vc</div></div>
+          <span class="c-arr">↗</span>
+        </a>
+        <a href="https://linkedin.com" target="_blank" rel="noopener" class="c-row reveal">
+          <div><div class="c-label">[03] LINKEDIN</div><div class="c-value">Linear Systems Ventures</div></div>
+          <span class="c-arr">↗</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="w">
+    <div class="footer-row">
+      <span class="footer-l"><span style="color:#111;margin-right:4px">©</span>LSV</span>
+      <div class="footer-m">
+        <span>LINEAR SYSTEMS VENTURES</span>
+        <span>·</span><span>HOLDING COMPANY</span>
+        <span>·</span><span>EST. 20XX</span>
+        <span>·</span><span>V1.0</span>
+      </div>
+      <div class="footer-r">© 2025 · ALL RIGHTS RESERVED</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Assign stagger delays to siblings sharing the same parent
+  document.querySelectorAll('.reveal').forEach(el => {
+    const siblings = Array.from(el.parentElement.querySelectorAll(':scope > .reveal'));
+    const idx = siblings.indexOf(el);
+    if (siblings.length > 1) el.dataset.delay = idx * 80;
+  });
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.transitionDelay = (entry.target.dataset.delay || 0) + 'ms';
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
