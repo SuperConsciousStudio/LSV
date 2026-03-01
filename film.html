@@ -156,6 +156,10 @@
   </div>
 
   <script>
+    // ── Set your video URL here when ready ──────────────────────────
+    const VIDEO_URL = ''
+    // ────────────────────────────────────────────────────────────────
+
     const timer       = document.getElementById('timer')
     const vid         = document.getElementById('vid')
     const empty       = document.getElementById('empty')
@@ -163,12 +167,12 @@
     const btnMute     = document.getElementById('btn-mute')
     const playOverlay = document.getElementById('play-overlay')
 
-    fetch('/video-status')
-      .then(r => r.json())
-      .then(({ exists, filename }) => {
-        if (!exists) { empty.classList.add('show'); playOverlay.classList.add('hidden'); return }
-        vid.src = '/uploads/' + filename
-      })
+    if (VIDEO_URL) {
+      vid.src = VIDEO_URL
+    } else {
+      empty.classList.add('show')
+      playOverlay.classList.add('hidden')
+    }
 
     playOverlay.addEventListener('click', () => {
       if (vid.paused) {
